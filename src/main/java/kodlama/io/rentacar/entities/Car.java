@@ -27,4 +27,6 @@ public class Car
     @ManyToOne
     @JoinColumn(name = "model_id")
     private Model model;
+    @OneToOne(mappedBy = "car")
+    private Maintenance maintenance; //or boolean attribute?
 }

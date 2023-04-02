@@ -1,29 +1,27 @@
 package kodlama.io.rentacar.entities;
 
 import jakarta.persistence.*;
+import kodlama.io.rentacar.entities.enums.State;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
-@Entity //imzalama işlemi -> kısıt kullanılmış oluyor
+@Entity
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "brands")
-public class Brand
+@Table(name = "maintenances")
+public class Maintenance
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String name;
-    @OneToMany(mappedBy = "brand")
-    private List<Model> models;
+    @Enumerated(EnumType.STRING)
+    private State state;// 1- Available, 2- Rented, 3- Maintance
+    @OneToOne
+    @JoinColumn(name = "car_id")
+    private Car car;
+
 }
-
-// car
-// model, her markanın modelleri vardır
-

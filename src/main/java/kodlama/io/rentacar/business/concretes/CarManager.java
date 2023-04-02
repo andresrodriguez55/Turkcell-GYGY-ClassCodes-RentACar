@@ -11,11 +11,13 @@ import kodlama.io.rentacar.business.dto.responses.update.UpdateBrandResponse;
 import kodlama.io.rentacar.business.dto.responses.update.UpdateCarResponse;
 import kodlama.io.rentacar.entities.Brand;
 import kodlama.io.rentacar.entities.Car;
+import kodlama.io.rentacar.entities.enums.State;
 import kodlama.io.rentacar.repository.CarRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service //once time of creation?
@@ -26,9 +28,15 @@ public class CarManager implements CarService
     private final ModelMapper mapper;
 
     @Override
-    public List<GetAllCarsResponse> getAll()
+    public List<GetAllCarsResponse> getAll(boolean useFilter)
     {
-        List<Car> cars = repository.findAll();
+
+        List<Car> cars = repository.findAll();;
+        if(useFilter)
+        {
+            cars = cars.stream().filter(car -> car.getMaintenance().getState() != State.MAINTENANCE).toList();
+        }
+
         List<GetAllCarsResponse> response = cars.stream().map(car -> mapper.map(car, GetAllCarsResponse.class)).toList();
         return response;
     }
