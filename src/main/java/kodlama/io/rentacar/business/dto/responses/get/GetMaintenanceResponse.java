@@ -1,10 +1,11 @@
 package kodlama.io.rentacar.business.dto.responses.get;
 
-import kodlama.io.rentacar.entities.enums.State;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,6 +14,9 @@ import lombok.Setter;
 public class GetMaintenanceResponse
 {
     private int id;
-    private State state;
+    private String information;
     private int carId;
+    private boolean isCompleted;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 }

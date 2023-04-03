@@ -1,11 +1,12 @@
 package kodlama.io.rentacar.entities;
 
 import jakarta.persistence.*;
-import kodlama.io.rentacar.entities.enums.State;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Setter
@@ -18,9 +19,11 @@ public class Maintenance
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Enumerated(EnumType.STRING)
-    private State state;// 1- Available, 2- Rented, 3- Maintance
-    @OneToOne
+    private String information;
+    private boolean isCompleted;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
+    @ManyToOne
     @JoinColumn(name = "car_id")
     private Car car;
 

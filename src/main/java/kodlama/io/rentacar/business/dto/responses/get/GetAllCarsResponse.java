@@ -1,5 +1,6 @@
 package kodlama.io.rentacar.business.dto.responses.get;
 
+import kodlama.io.rentacar.entities.enums.State;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,8 +15,15 @@ public class GetAllCarsResponse
     private int id;
     private int modelYear;
     private String plate;
-    private int state; //1 - available, 2 - rented, 3 - maintance
+    private State state;
     private double dailyPrice;
     private int modelId;
+
+    /*
+        isim değişikliği mümkün etmek istersek business layerde ilişkili
+        olunan objeye ulaşıp istenilen atributenin değeri ordan alınmalı
+    */
+    //private String modelName;
+    //private String modelBrandName;
 }
 

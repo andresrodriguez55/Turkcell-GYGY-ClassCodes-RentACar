@@ -13,7 +13,7 @@ public class CreateCarRequest
 {
     private int modelYear;
     private String plate;
-    private int state; //1 - available, 2 - rented, 3 - maintance
+    //private State state; //default
     private double dailyPrice;
     private int modelId;
 }

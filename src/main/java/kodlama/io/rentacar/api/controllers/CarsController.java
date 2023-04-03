@@ -1,17 +1,11 @@
 package kodlama.io.rentacar.api.controllers;
 
 import kodlama.io.rentacar.business.abstracts.CarService;
-import kodlama.io.rentacar.business.dto.requests.create.CreateBrandRequest;
 import kodlama.io.rentacar.business.dto.requests.create.CreateCarRequest;
-import kodlama.io.rentacar.business.dto.requests.update.UpdateBrandRequest;
 import kodlama.io.rentacar.business.dto.requests.update.UpdateCarRequest;
-import kodlama.io.rentacar.business.dto.responses.create.CreateBrandResponse;
 import kodlama.io.rentacar.business.dto.responses.create.CreateCarResponse;
-import kodlama.io.rentacar.business.dto.responses.get.GetAllBrandsResponse;
 import kodlama.io.rentacar.business.dto.responses.get.GetAllCarsResponse;
-import kodlama.io.rentacar.business.dto.responses.get.GetBrandResponse;
 import kodlama.io.rentacar.business.dto.responses.get.GetCarResponse;
-import kodlama.io.rentacar.business.dto.responses.update.UpdateBrandResponse;
 import kodlama.io.rentacar.business.dto.responses.update.UpdateCarResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,9 +21,9 @@ public class CarsController
     private final CarService service;
 
     @GetMapping
-    public List<GetAllCarsResponse> getAll(@RequestParam(required = false) boolean useFilter)
+    public List<GetAllCarsResponse> getAll(@RequestParam(defaultValue = "true") boolean includeCarsThatAreInMaintenance)
     {
-        return service.getAll(useFilter);
+        return service.getAll(includeCarsThatAreInMaintenance);
     }
 
     @GetMapping(path = "/{id}")

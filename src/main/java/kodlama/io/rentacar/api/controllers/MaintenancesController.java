@@ -1,18 +1,11 @@
 package kodlama.io.rentacar.api.controllers;
 
-import kodlama.io.rentacar.business.abstracts.CarService;
 import kodlama.io.rentacar.business.abstracts.MaintenanceService;
-import kodlama.io.rentacar.business.dto.requests.create.CreateCarRequest;
 import kodlama.io.rentacar.business.dto.requests.create.CreateMaintenanceRequest;
-import kodlama.io.rentacar.business.dto.requests.update.UpdateCarRequest;
 import kodlama.io.rentacar.business.dto.requests.update.UpdateMaintenanceRequest;
-import kodlama.io.rentacar.business.dto.responses.create.CreateCarResponse;
 import kodlama.io.rentacar.business.dto.responses.create.CreateMaintenanceResponse;
-import kodlama.io.rentacar.business.dto.responses.get.GetAllCarsResponse;
 import kodlama.io.rentacar.business.dto.responses.get.GetAllMaintenanceResponse;
-import kodlama.io.rentacar.business.dto.responses.get.GetCarResponse;
 import kodlama.io.rentacar.business.dto.responses.get.GetMaintenanceResponse;
-import kodlama.io.rentacar.business.dto.responses.update.UpdateCarResponse;
 import kodlama.io.rentacar.business.dto.responses.update.UpdateMaintenanceResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -43,7 +36,13 @@ public class MaintenancesController
     @ResponseStatus(HttpStatus.CREATED)
     public CreateMaintenanceResponse create(@RequestBody CreateMaintenanceRequest request)
     {
-        return service.create(request);
+        return service.add(request);
+    }
+
+    @PutMapping(path = "/return/{carId}")
+    public GetMaintenanceResponse returnCarFromMaintenance(@PathVariable("carId") int carId)
+    {
+        return service.returnCarFromMaintenance(carId);
     }
 
     @PutMapping(path = "/{id}")
