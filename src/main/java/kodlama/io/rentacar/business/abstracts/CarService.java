@@ -14,7 +14,7 @@ public interface CarService
 {
     List<GetAllCarsResponse> getAll(boolean includeCarsThatAreInMaintenance);
     GetCarResponse getById(int id);
-    CreateCarResponse create(CreateCarRequest request);
+    CreateCarResponse add(CreateCarRequest request);
     UpdateCarResponse update(int id, UpdateCarRequest request);
     void changeState(int id, State state);
     void delete(Integer id);

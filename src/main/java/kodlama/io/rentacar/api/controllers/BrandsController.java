@@ -34,9 +34,9 @@ public class BrandsController
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateBrandResponse create(@RequestBody CreateBrandRequest brand)
+    public CreateBrandResponse add(@RequestBody CreateBrandRequest brand)
     {
-        return service.create(brand);
+        return service.add(brand);
     }
 
     @PutMapping(path = "/{id}")

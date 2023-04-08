@@ -41,7 +41,7 @@ public class BrandManager implements BrandService
     }
 
     @Override
-    public CreateBrandResponse create(CreateBrandRequest request)
+    public CreateBrandResponse add(CreateBrandRequest request)
     {
         checkIfBrandExistByNameIgnoreCase(request.getName());
 
@@ -67,8 +67,7 @@ public class BrandManager implements BrandService
     public void delete(Integer id)
     {
         checkIfBrandExists(id);
-        Brand dbBrand = repository.findById(id).get();
-        repository.delete(dbBrand);
+        repository.deleteById(id);
     }
 
     private void checkIfBrandExists(int id)

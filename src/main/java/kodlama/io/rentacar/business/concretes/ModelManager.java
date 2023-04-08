@@ -34,7 +34,7 @@ public class ModelManager implements ModelService
     @Override
     public GetModelResponse getById(int id)
     {
-        checkIfModelExistById(id);
+        checkIfModelExists(id);
         Model model = repository.findById(id).get();
         GetModelResponse response = mapper.map(model, GetModelResponse.class);
         return response;
@@ -54,7 +54,7 @@ public class ModelManager implements ModelService
     @Override
     public UpdateModelResponse update(int id, UpdateModelRequest request)
     {
-        checkIfModelExistById(id);
+        checkIfModelExists(id);
         Model model = mapper.map(request, Model.class);
         model.setId(id);
         repository.save(model);
@@ -65,11 +65,11 @@ public class ModelManager implements ModelService
     @Override
     public void delete(int id)
     {
-        checkIfModelExistById(id);
+        checkIfModelExists(id);
         repository.deleteById(id);
     }
 
-    private void checkIfModelExistById(int id)
+    private void checkIfModelExists(int id)
     {
         if(!repository.existsById(id))
         {

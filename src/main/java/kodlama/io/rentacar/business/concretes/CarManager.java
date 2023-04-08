@@ -41,7 +41,7 @@ public class CarManager implements CarService
     }
 
     @Override
-    public CreateCarResponse create(CreateCarRequest request)
+    public CreateCarResponse add(CreateCarRequest request)
     {
         Car car = mapper.map(request, Car.class);
         car.setId(0); // doğru kullanım, mapper birden fazla id attributeleri karıştırabildiği için her önleme karşı..
@@ -68,7 +68,7 @@ public class CarManager implements CarService
         checkIfCarExists(id);
 
         Car car = repository.findById(id).get();
-        repository.delete(car);
+        repository.deleteById(id);
     }
 
     @Override

@@ -13,7 +13,7 @@ public interface BrandService
 {
     List<GetAllBrandsResponse> getAll();
     GetBrandResponse getById(int id);
-    CreateBrandResponse create(CreateBrandRequest request);
+    CreateBrandResponse add(CreateBrandRequest request);
     UpdateBrandResponse update(int id, UpdateBrandRequest product);
     void delete(Integer id);
 }

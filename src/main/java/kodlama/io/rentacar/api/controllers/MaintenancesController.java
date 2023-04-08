@@ -34,13 +34,13 @@ public class MaintenancesController
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateMaintenanceResponse create(@RequestBody CreateMaintenanceRequest request)
+    public CreateMaintenanceResponse add(@RequestBody CreateMaintenanceRequest request)
     {
         return service.add(request);
     }
 
-    @PutMapping(path = "/return/{carId}")
-    public GetMaintenanceResponse returnCarFromMaintenance(@PathVariable("carId") int carId)
+    @PutMapping(path = "/return")
+    public GetMaintenanceResponse returnCarFromMaintenance(@RequestParam int carId)
     {
         return service.returnCarFromMaintenance(carId);
     }

@@ -34,9 +34,9 @@ public class CarsController
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateCarResponse create(@RequestBody CreateCarRequest car)
+    public CreateCarResponse add(@RequestBody CreateCarRequest car)
     {
-        return service.create(car);
+        return service.add(car);
     }
 
     @PutMapping(path = "/{id}")

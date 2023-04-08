@@ -97,8 +97,8 @@ public class MaintenanceManager implements MaintenanceService
     public void delete(Integer id)
     {
         checkIfMaintenanceExists(id);
-        Maintenance maintenance = repository.findById(id).get();
-        repository.delete(maintenance);
+        makeCarAvailableIfIsCompletedFalse(id);
+        repository.deleteById(id);
     }
 
     private void checkIfMaintenanceExists(int id)
@@ -126,6 +126,15 @@ public class MaintenanceManager implements MaintenanceService
         if(carService.getById(request.getCarId()).getState().equals(State.RENTED))
         {
             throw new RuntimeException("Car is rented, it can be take it to maintenance!");
+        }
+    }
+
+    private void makeCarAvailableIfIsCompletedFalse(int id)
+    {
+        int carId = repository.findById(id).get().getCar().getId();
+        if(repository.existsByCarIdAndIsCompletedIsFalse(carId))
+        {
+            carService.changeState(carId, State.AVAILABLE);
         }
     }
 }
