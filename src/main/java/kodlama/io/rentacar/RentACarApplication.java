@@ -12,4 +12,10 @@ public class RentACarApplication
 	{
 		SpringApplication.run(RentACarApplication.class, args);
 	}
+
+	/*
+	* Invoice
+	* id, carId, modelName, branchName, modelYear, dailyPrice, totalPrice, rentedForDays, rentedAt
+	* validation, her alan doldurmalı, 2023 >= modelyear > 1999, ...
+	* CRUD */
 }

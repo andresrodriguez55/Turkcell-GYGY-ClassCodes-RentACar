@@ -1,21 +1,21 @@
 package kodlama.io.rentacar.business.concretes;
 
 import kodlama.io.rentacar.business.abstracts.CarService;
+import kodlama.io.rentacar.business.abstracts.InvoiceService;
 import kodlama.io.rentacar.business.abstracts.PaymentService;
 import kodlama.io.rentacar.business.abstracts.RentalService;
-import kodlama.io.rentacar.business.dto.requests.create.CreateMaintenanceRequest;
+import kodlama.io.rentacar.business.dto.requests.create.CreateInvoiceRequest;
 import kodlama.io.rentacar.business.dto.requests.create.CreateRentalRequest;
 import kodlama.io.rentacar.business.dto.requests.update.UpdateRentalRequest;
 import kodlama.io.rentacar.business.dto.responses.create.CreateRentalResponse;
-import kodlama.io.rentacar.business.dto.responses.get.GetAllCarsResponse;
 import kodlama.io.rentacar.business.dto.responses.get.GetAllRentalsResponse;
+import kodlama.io.rentacar.business.dto.responses.get.GetCarResponse;
 import kodlama.io.rentacar.business.dto.responses.get.GetRentalResponse;
 import kodlama.io.rentacar.business.dto.responses.update.UpdateRentalResponse;
-import kodlama.io.rentacar.core.dto.CreateRentalPaymentRequest;
-import kodlama.io.rentacar.entities.Car;
+import kodlama.io.rentacar.business.rules.RentalBusinessRules;
+import kodlama.io.rentacar.common.dto.CreateRentalPaymentRequest;
 import kodlama.io.rentacar.entities.Rental;
 import kodlama.io.rentacar.entities.enums.State;
-import kodlama.io.rentacar.repository.CarRepository;
 import kodlama.io.rentacar.repository.RentalRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -32,19 +32,23 @@ public class RentalManager implements RentalService
     private final ModelMapper mapper;
     private final CarService carService;
     private final PaymentService paymentService;
+    private final InvoiceService invoiceService;
+
+    private final RentalBusinessRules rules;
 
     @Override
     public List<GetAllRentalsResponse> getAll()
     {
         List<Rental> rentals = repository.findAll();
-        List<GetAllRentalsResponse> response = rentals.stream().map(rental -> mapper.map(rental, GetAllRentalsResponse.class)).toList();
+        List<GetAllRentalsResponse> response =
+                rentals.stream().map(rental -> mapper.map(rental, GetAllRentalsResponse.class)).toList();
         return response;
     }
 
     @Override
     public GetRentalResponse getById(int id)
     {
-        checkIfRentalExists(id);
+        rules.checkIfRentalExists(id);
         Rental rental = repository.findById(id).get();
         GetRentalResponse response = mapper.map(rental, GetRentalResponse.class);
         return response;
@@ -53,7 +57,7 @@ public class RentalManager implements RentalService
     @Override
     public CreateRentalResponse add(CreateRentalRequest request)
     {
-        checkCarAvailabilityForRent(request);
+        rules.checkCarAvailabilityForRent(carService.getById(request.getCarId()).getState());
         Rental rental = mapper.map(request, Rental.class);
         rental.setId(0);
         rental.setStartDate(LocalDateTime.now());
@@ -68,6 +72,10 @@ public class RentalManager implements RentalService
 
         carService.changeState(request.getCarId(), State.RENTED);
 
+        CreateInvoiceRequest invoiceRequest = new CreateInvoiceRequest();
+        setInvoiceRequest(request, invoiceRequest, rental);
+        invoiceService.add(invoiceRequest);
+
         CreateRentalResponse response = mapper.map(rental, CreateRentalResponse.class);
         return response;
     }
@@ -75,7 +83,7 @@ public class RentalManager implements RentalService
     @Override
     public UpdateRentalResponse update(int id, UpdateRentalRequest request)
     {
-        checkIfRentalExists(id);
+        rules.checkIfRentalExists(id);
         Rental rental = mapper.map(request, Rental.class);
         rental.setId(id);
         repository.save(rental);
@@ -86,7 +94,7 @@ public class RentalManager implements RentalService
     @Override
     public void delete(Integer id)
     {
-        checkIfRentalExists(id);
+        rules.checkIfRentalExists(id);
         int carId = repository.findById(id).get().getCar().getId();
         carService.changeState(carId, State.AVAILABLE);
         repository.deleteById(id);
@@ -97,19 +105,17 @@ public class RentalManager implements RentalService
         return rental.getDailyPrice()*rental.getRentedForDays();
     }
 
-    private void checkIfRentalExists(int id)
+    private void setInvoiceRequest(CreateRentalRequest request, CreateInvoiceRequest invoiceRequest, Rental rental)
     {
-        if(!repository.existsById(id))
-        {
-            throw new IllegalArgumentException("ID does not exist..");
-        }
-    }
+        GetCarResponse car = carService.getById(request.getCarId());
 
-    private void checkCarAvailabilityForRent(CreateRentalRequest request)
-    {
-        if(!carService.getById(request.getCarId()).getState().equals(State.AVAILABLE))
-        {
-            throw new RuntimeException("Car is not ready for rent...");
-        }
+        invoiceRequest.setRentedAt(rental.getStartDate());
+        invoiceRequest.setModelName(car.getModelName());
+        invoiceRequest.setBrandName(car.getModelBrandName());
+        invoiceRequest.setDailyPrice(request.getDailyPrice());
+        invoiceRequest.setPlate(car.getPlate());
+        invoiceRequest.setCardHolder(request.getPaymentRequest().getCardHolder());
+        invoiceRequest.setModelYear(car.getModelYear());
+        invoiceRequest.setRentedForDays(request.getRentedForDays());
     }
 }

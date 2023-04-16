@@ -11,7 +11,7 @@ public class FakePosServiceAdapter implements PostService
     @Override
     public void pay()
     {
-        boolean isPaymentSuccessfull = new Random().nextBoolean();
+        boolean isPaymentSuccessfull = true; //new Random().nextBoolean();
         if(!isPaymentSuccessfull)
         {
             throw new RuntimeException("Payment invalid...");
