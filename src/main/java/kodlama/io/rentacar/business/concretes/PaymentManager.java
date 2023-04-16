@@ -8,6 +8,7 @@ import kodlama.io.rentacar.business.dto.responses.create.CreatePaymentResponse;
 import kodlama.io.rentacar.business.dto.responses.get.GetAllPaymentsResponse;
 import kodlama.io.rentacar.business.dto.responses.get.GetPaymentResponse;
 import kodlama.io.rentacar.business.dto.responses.update.UpdatePaymentResponse;
+import kodlama.io.rentacar.business.rules.PaymentBusinessRules;
 import kodlama.io.rentacar.common.dto.CreateRentalPaymentRequest;
 import kodlama.io.rentacar.entities.Payment;
 import kodlama.io.rentacar.repository.PaymentRepository;
@@ -24,6 +25,7 @@ public class PaymentManager implements PaymentService
     private final PaymentRepository repository;
     private final ModelMapper mapper;
     private final PostService postService;
+    private final PaymentBusinessRules rules;
 
     @Override
     public List<GetAllPaymentsResponse> getAll()
@@ -47,7 +49,7 @@ public class PaymentManager implements PaymentService
     @Override
     public CreatePaymentResponse add(CreatePaymentRequest request)
     {
-        checkIfCardExistsByCardNumber(request);
+        rules.checkIfCardExistsByCardNumber(request);
 
         Payment payment = mapper.map(request, Payment.class);
         payment.setId(0);
@@ -60,7 +62,7 @@ public class PaymentManager implements PaymentService
     @Override
     public UpdatePaymentResponse update(int id, UpdatePaymentRequest request)
     {
-        checkIfPaymentExists(id);
+        rules.checkIfPaymentExists(id);
 
         Payment payment = mapper.map(request, Payment.class);
         payment.setId(id);
@@ -73,62 +75,24 @@ public class PaymentManager implements PaymentService
     @Override
     public void delete(int id)
     {
-        checkIfPaymentExists(id);
+        rules.checkIfPaymentExists(id);
 
         repository.deleteById(id);
-    }
-
-    private void checkIfPaymentExists(int id)
-    {
-        if(!repository.existsById(id))
-        {
-            throw new RuntimeException("Payment does not exists...");
-        }
-    }
-
-    private void checkIfCardExistsByCardNumber(CreatePaymentRequest request)
-    {
-        if(repository.existsByCardNumber(request.getCardNumber()))
-        {
-            throw new RuntimeException("Card already exists...");
-        }
     }
 
     @Override
     public void processRentalPayment(CreateRentalPaymentRequest request)
     {
-        checkIfPaymentIsValid(request);
+        rules.checkIfPaymentIsValid(request);
 
         Payment payment = repository.findByCardNumber(request.getCardNumber());
 
-        checkIfBalanceIsEnough(request.getPrice(), payment.getBalance());
+        rules.checkIfBalanceIsEnough(request.getPrice(), payment.getBalance());
 
         //FAKE POS SERVICE
         postService.pay();
 
         payment.setBalance(payment.getBalance() - request.getPrice());
         repository.save(payment);
-    }
-
-    private void checkIfPaymentIsValid(CreateRentalPaymentRequest request)
-    {
-        if(!repository.existsByCardNumberAndCardHolderAndCardExpirationYearAndCardExpirationMonthAndCardCvv(
-                request.getCardNumber(),
-                request.getCardHolder(),
-                request.getCardExpirationYear(),
-                request.getCardExpirationMonth(),
-                request.getCardCvv()
-        ))
-        {
-            throw new RuntimeException("Invalid card information...");
-        }
-    }
-
-    private void checkIfBalanceIsEnough(double price, double balance)
-    {
-        if(balance < price)
-        {
-            throw new RuntimeException("Insufficient balance...");
-        }
     }
 }

@@ -1,9 +1,13 @@
 package kodlama.io.rentacar;
 
-import org.modelmapper.ModelMapper;
+import kodlama.io.rentacar.core.exceptions.BusinessException;
+import kodlama.io.rentacar.core.utils.results.ExceptionResult;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @SpringBootApplication
 public class RentACarApplication
@@ -12,10 +16,4 @@ public class RentACarApplication
 	{
 		SpringApplication.run(RentACarApplication.class, args);
 	}
-
-	/*
-	* Invoice
-	* id, carId, modelName, branchName, modelYear, dailyPrice, totalPrice, rentedForDays, rentedAt
-	* validation, her alan doldurmalı, 2023 >= modelyear > 1999, ...
-	* CRUD */
 }

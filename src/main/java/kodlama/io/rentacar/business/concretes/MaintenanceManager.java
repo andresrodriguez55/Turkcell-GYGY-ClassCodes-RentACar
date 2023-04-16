@@ -8,6 +8,7 @@ import kodlama.io.rentacar.business.dto.responses.create.CreateMaintenanceRespon
 import kodlama.io.rentacar.business.dto.responses.get.GetAllMaintenanceResponse;
 import kodlama.io.rentacar.business.dto.responses.get.GetMaintenanceResponse;
 import kodlama.io.rentacar.business.dto.responses.update.UpdateMaintenanceResponse;
+import kodlama.io.rentacar.business.rules.MaintenanceBusinessRules;
 import kodlama.io.rentacar.entities.Maintenance;
 import kodlama.io.rentacar.entities.enums.State;
 import kodlama.io.rentacar.repository.MaintenanceRepository;
@@ -25,6 +26,7 @@ public class MaintenanceManager implements MaintenanceService
     private final MaintenanceRepository repository;
     private final CarService carService;
     private final ModelMapper mapper;
+    private final MaintenanceBusinessRules rules;
 
     @Override
     public List<GetAllMaintenanceResponse> getAll()
@@ -39,7 +41,7 @@ public class MaintenanceManager implements MaintenanceService
     @Override
     public GetMaintenanceResponse getById(int id)
     {
-        checkIfMaintenanceExists(id);
+        rules.checkIfMaintenanceExists(id);
 
         Maintenance maintenance = repository.findById(id).get();
 
@@ -50,7 +52,7 @@ public class MaintenanceManager implements MaintenanceService
     @Override
     public GetMaintenanceResponse returnCarFromMaintenance(int carId)
     {
-        checkIfCarIsNotUnderMaintenance(carId);
+        rules.checkIfCarIsNotUnderMaintenance(carId);
 
         Maintenance maintenance = repository.findByCarIdAndIsCompletedIsFalse(carId);
         maintenance.setCompleted(true);
@@ -65,8 +67,8 @@ public class MaintenanceManager implements MaintenanceService
     @Override
     public CreateMaintenanceResponse add(CreateMaintenanceRequest request)
     {
-        checkIfCarIsUnderMaintenance(request.getCarId());
-        checkCarAvailabilityForMaintenance(request);
+        rules.checkIfCarIsUnderMaintenance(request.getCarId());
+        rules.checkCarAvailabilityForMaintenance(carService.getById(request.getCarId()).getState());
 
         Maintenance maintenance = mapper.map(request, Maintenance.class);
         maintenance.setId(0);
@@ -83,7 +85,7 @@ public class MaintenanceManager implements MaintenanceService
     @Override
     public UpdateMaintenanceResponse update(int id, UpdateMaintenanceRequest request)
     {
-        checkIfMaintenanceExists(id);
+        rules.checkIfMaintenanceExists(id);
 
         Maintenance maintenance = mapper.map(request, Maintenance.class);
         maintenance.setId(id);
@@ -96,37 +98,9 @@ public class MaintenanceManager implements MaintenanceService
     @Override
     public void delete(Integer id)
     {
-        checkIfMaintenanceExists(id);
+        rules.checkIfMaintenanceExists(id);
         makeCarAvailableIfIsCompletedFalse(id);
         repository.deleteById(id);
-    }
-
-    private void checkIfMaintenanceExists(int id)
-    {
-        if(!repository.existsById(id))
-        {
-            throw new IllegalArgumentException("ID does not exist..");
-        }
-    }
-
-    private void checkIfCarIsNotUnderMaintenance(int carId)
-    {
-        if(!repository.existsByCarIdAndIsCompletedIsFalse(carId))
-            throw new RuntimeException("The car is not in maintenance!");
-    }
-
-    private void checkIfCarIsUnderMaintenance(int carId)
-    {
-        if(repository.existsByCarIdAndIsCompletedIsFalse(carId))
-            throw new RuntimeException("The car is in maintenance!");
-    }
-
-    private void checkCarAvailabilityForMaintenance(CreateMaintenanceRequest request)
-    {
-        if(carService.getById(request.getCarId()).getState().equals(State.RENTED))
-        {
-            throw new RuntimeException("Car is rented, it can be take it to maintenance!");
-        }
     }
 
     private void makeCarAvailableIfIsCompletedFalse(int id)

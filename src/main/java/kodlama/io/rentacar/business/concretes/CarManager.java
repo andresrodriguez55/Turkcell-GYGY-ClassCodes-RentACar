@@ -7,6 +7,7 @@ import kodlama.io.rentacar.business.dto.responses.create.CreateCarResponse;
 import kodlama.io.rentacar.business.dto.responses.get.GetAllCarsResponse;
 import kodlama.io.rentacar.business.dto.responses.get.GetCarResponse;
 import kodlama.io.rentacar.business.dto.responses.update.UpdateCarResponse;
+import kodlama.io.rentacar.business.rules.CarBusinessRules;
 import kodlama.io.rentacar.entities.Car;
 import kodlama.io.rentacar.entities.enums.State;
 import kodlama.io.rentacar.repository.CarRepository;
@@ -23,6 +24,8 @@ public class CarManager implements CarService
     private final CarRepository repository;
     private final ModelMapper mapper;
 
+    private final CarBusinessRules rules;
+
     @Override
     public List<GetAllCarsResponse> getAll(boolean includeCarsThatAreInMaintenance)
     {
@@ -34,7 +37,7 @@ public class CarManager implements CarService
     @Override
     public GetCarResponse getById(int id)
     {
-        checkIfCarExists(id);
+        rules.checkIfCarExists(id);
         Car car = repository.findById(id).get();
         GetCarResponse response = mapper.map(car, GetCarResponse.class);
         return response;
@@ -54,7 +57,7 @@ public class CarManager implements CarService
     @Override
     public UpdateCarResponse update(int id, UpdateCarRequest request)
     {
-        checkIfCarExists(id);
+        rules.checkIfCarExists(id);
         Car car = mapper.map(request, Car.class);
         car.setId(id);
         repository.save(car);
@@ -65,7 +68,7 @@ public class CarManager implements CarService
     @Override
     public void delete(Integer id)
     {
-        checkIfCarExists(id);
+        rules.checkIfCarExists(id);
 
         Car car = repository.findById(id).get();
         repository.deleteById(id);
@@ -77,14 +80,6 @@ public class CarManager implements CarService
         Car car = repository.findById(id).get();
         car.setState(state);
         repository.save(car);
-    }
-
-    private void checkIfCarExists(int id)
-    {
-        if(!repository.existsById(id))
-        {
-            throw new IllegalArgumentException("ID does not exist..");
-        }
     }
 
     private List<Car> filterCarsByMaintenanceState(boolean includeCarsThatAreInMaintenance)

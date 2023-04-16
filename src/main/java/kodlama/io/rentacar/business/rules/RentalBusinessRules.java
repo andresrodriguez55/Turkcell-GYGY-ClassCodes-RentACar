@@ -1,9 +1,9 @@
 package kodlama.io.rentacar.business.rules;
 
+import kodlama.io.rentacar.core.exceptions.BusinessException;
 import kodlama.io.rentacar.entities.enums.State;
 import kodlama.io.rentacar.repository.RentalRepository;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,7 +16,7 @@ public class RentalBusinessRules
     {
         if(!repository.existsById(id))
         {
-            throw new IllegalArgumentException("ID does not exist..");
+            throw new BusinessException("ID does not exist..");
         }
     }
 
@@ -24,7 +24,7 @@ public class RentalBusinessRules
     {
         if(!state.equals(State.AVAILABLE))
         {
-            throw new RuntimeException("Car is not ready for rent...");
+            throw new BusinessException("Car is not ready for rent...");
         }
     }
 }
