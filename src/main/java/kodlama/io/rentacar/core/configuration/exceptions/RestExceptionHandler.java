@@ -28,7 +28,7 @@ public class RestExceptionHandler
             validationErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
         }
 
-        return new ExceptionResult<>(ExceptionTypes.Exception.Validation, exception.getMessage());
+        return new ExceptionResult<>(ExceptionTypes.Exception.Validation, validationErrors);
     }
 
     @ExceptionHandler

@@ -22,7 +22,7 @@ public class CarBusinessRules
 
     public void checkIfCarExistsByPlate(String plate)
     {
-        if(!repository.existsByPlate(plate))
+        if(repository.existsByPlate(plate))
         {
             throw new BusinessException(Messages.Car.PlateExists);
         }
