@@ -46,6 +46,7 @@ public class CarManager implements CarService
     @Override
     public CreateCarResponse add(CreateCarRequest request)
     {
+        rules.checkIfCarExistsByPlate(request.getPlate());
         Car car = mapper.map(request, Car.class);
         car.setId(0); // doğru kullanım, mapper birden fazla id attributeleri karıştırabildiği için her önleme karşı..
         car.setState(State.AVAILABLE);

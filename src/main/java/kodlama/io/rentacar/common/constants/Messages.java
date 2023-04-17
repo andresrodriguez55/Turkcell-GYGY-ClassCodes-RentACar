@@ -7,6 +7,7 @@ public class Messages
         public static final String NotExists = "CAR_NOT_EXISTS";
         public static final String Exists = "CAR_ALREADY_EXISTS";
         public static final String NotAvailable = "CAR_NOT_AVAILABLE";
+        public static final String PlateExists = "CAR_PLATE_ALREADY_EXISTS";
     }
 
     public static class Model
