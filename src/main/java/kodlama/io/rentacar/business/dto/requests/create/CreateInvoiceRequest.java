@@ -1,5 +1,6 @@
 package kodlama.io.rentacar.business.dto.requests.create;
 
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,14 +25,11 @@ public class CreateInvoiceRequest
     private String brandName;
     @NotBlank
     private String plate;
-    @NotNull
     @Min(2006)
     private int modelYear;
-    @NotNull
+    @DecimalMin(value = "0.01")
     private double dailyPrice;
-    @NotNull
     @Min(1)
     private int rentedForDays;
-
     private LocalDateTime rentedAt;
 }

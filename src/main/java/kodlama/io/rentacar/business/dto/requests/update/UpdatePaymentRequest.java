@@ -1,5 +1,6 @@
 package kodlama.io.rentacar.business.dto.requests.update;
 
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +17,6 @@ import lombok.Setter;
 @Setter
 public class UpdatePaymentRequest extends PaymentRequest
 {
-    @NotNull
-    @Min(value = 0)
+    @DecimalMin(value = "0.01")
     private double balance;
 }

@@ -16,17 +16,15 @@ import lombok.Setter;
 @Setter
 public class CreateCarRequest
 {
-    @NotNull
     @Min(1996)
     @Max(2023)
     private int modelYear;
     @Pattern(regexp = Regex.Plate, message = "Plate number must match the pattern")
     private String plate;
     //private State state; //default
-    @NotNull
     @Min(1)
     @Max(10000000)
     private double dailyPrice;
-    @NotNull
+
     private int modelId;
 }
