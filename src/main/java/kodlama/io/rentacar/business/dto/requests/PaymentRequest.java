@@ -27,7 +27,6 @@ public class PaymentRequest
     @Min(value = 2023, message = "Card's expiration year must be at least 2023...")
     private int cardExpirationYear;
 
-    @NotNull
     @Max(value = 12)
     @Min(value = 1)
     private int cardExpirationMonth;

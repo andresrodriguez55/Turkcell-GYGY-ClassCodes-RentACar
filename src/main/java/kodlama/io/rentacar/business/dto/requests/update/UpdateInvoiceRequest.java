@@ -25,7 +25,7 @@ public class UpdateInvoiceRequest
     private String brandName;
     @NotBlank
     private String plate;
-    @Min(2006)
+    @Min(1996)
     private int modelYear;
     @DecimalMin(value = "0.01")
     private double dailyPrice;
